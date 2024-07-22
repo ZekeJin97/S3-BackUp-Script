@@ -9,12 +9,14 @@ from constructs import Construct
 
 class CopierStack(Stack):
 
-    def __init__(self, scope: Construct, id: str, **kwargs) -> None:
-        super().__init__(scope, id, **kwargs)
+    def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
+        super().__init__(scope, construct_id, **kwargs)
+
+        print(f"Initializing {construct_id}")
 
         # Define the buckets
-        source_bucket = s3.Bucket(self, "SourceBucket")
-        destination_bucket = s3.Bucket(self, "DestinationBucket")
+        self.source_bucket = s3.Bucket(self, "SourceBucket")
+        self.destination_bucket = s3.Bucket(self, "DestinationBucket")
 
         # Lambda function to copy objects from source to destination
         copier_lambda = lambda_.Function(self, "CopierLambda",
@@ -22,22 +24,24 @@ class CopierStack(Stack):
             handler="copier.handler",
             code=lambda_.Code.from_asset("lambda"),
             environment={
-                'DESTINATION_BUCKET': destination_bucket.bucket_name
+                'DESTINATION_BUCKET': self.destination_bucket.bucket_name
             }
         )
 
         # Permissions for the lambda function
-        source_bucket.grant_read(copier_lambda)
-        destination_bucket.grant_write(copier_lambda)
+        self.source_bucket.grant_read(copier_lambda)
+        self.destination_bucket.grant_write(copier_lambda)
 
         # Set up S3 event to invoke the lambda
-        source_bucket.add_event_notification(
+        self.source_bucket.add_event_notification(
             s3.EventType.OBJECT_CREATED,
             s3_notifications.LambdaDestination(copier_lambda)
         )
 
-        # Log group for Copier Lambda
+        # Log for Copier Lambda
         logs.LogGroup(self, "CopierLogGroup",
             log_group_name=f"/aws/lambda/{copier_lambda.function_name}",
             retention=logs.RetentionDays.ONE_WEEK
         )
+
+        print(f"{construct_id} initialization complete")

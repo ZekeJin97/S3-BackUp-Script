@@ -9,8 +9,10 @@ from constructs import Construct
 
 class CleanerStack(Stack):
 
-    def __init__(self, scope: Construct, id: str, destination_bucket_name: str, **kwargs) -> None:
-        super().__init__(scope, id, **kwargs)
+    def __init__(self, scope: Construct, construct_id: str, destination_bucket_name: str, **kwargs) -> None:
+        super().__init__(scope, construct_id, **kwargs)
+
+        print(f"Initializing {construct_id}")
 
         # Metric for the size of temporary objects
         temp_metric = cloudwatch.Metric(
@@ -22,30 +24,30 @@ class CleanerStack(Stack):
 
         # Alarm to trigger the cleaner lambda
         alarm = cloudwatch.Alarm(self, "TempObjectsSizeAlarm",
-            metric=temp_metric,
-            threshold=3 * 1024,  # 3KB
-            evaluation_periods=1,
-            datapoints_to_alarm=1
+                                 metric=temp_metric,
+                                 threshold=3 * 1024,  # 3KB
+                                 evaluation_periods=1,
+                                 datapoints_to_alarm=1
         )
 
         # Lambda function to clean temporary objects
         cleaner_lambda = lambda_.Function(self, "CleanerLambda",
-            runtime=lambda_.Runtime.PYTHON_3_12,
-            handler="cleaner.handler",
-            code=lambda_.Code.from_asset("lambda"),
-            environment={
-                'DESTINATION_BUCKET': destination_bucket_name
-            }
+                                          runtime=lambda_.Runtime.PYTHON_3_12,
+                                          handler="cleaner.handler",
+                                          code=lambda_.Code.from_asset("lambda"),
+                                          environment={
+                                              'DESTINATION_BUCKET': destination_bucket_name
+                                          }
         )
-
-        # Permissions for the lambda function
-        # Note: You might need to set the permissions here if required
 
         # Alarm action
         alarm.add_alarm_action(cw_actions.LambdaAction(cleaner_lambda))
 
-        # Log group for Cleaner Lambda
+        # Log for Cleaner Lambda
         logs.LogGroup(self, "CleanerLogGroup",
-            log_group_name=f"/aws/lambda/{cleaner_lambda.function_name}",
-            retention=logs.RetentionDays.ONE_WEEK
+                      log_group_name=f"/aws/lambda/{cleaner_lambda.function_name}",
+                      retention=logs.RetentionDays.ONE_WEEK
         )
+
+        print(f"{construct_id} initialization complete")
+

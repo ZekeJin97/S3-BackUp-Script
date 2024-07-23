@@ -1,0 +1,458 @@
+{
+ "Resources": {
+  "TempObjectsSizeAlarm657F75CC": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmActions": [
+     {
+      "Fn::GetAtt": [
+       "CleanerLambdaADF65AF3",
+       "Arn"
+      ]
+     }
+    ],
+    "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+    "DatapointsToAlarm": 1,
+    "Dimensions": [
+     {
+      "Name": "BucketName",
+      "Value": {
+       "Fn::ImportValue": "CopierStack:ExportsOutputRefDestinationBucket4BECDB47A299B8F3"
+      }
+     }
+    ],
+    "EvaluationPeriods": 1,
+    "MetricName": "TemporaryObjectSize",
+    "Namespace": "S3BackupSystem",
+    "Period": 10,
+    "Statistic": "Sum",
+    "Threshold": 3072
+   },
+   "Metadata": {
+    "aws:cdk:path": "CleanerStack/TempObjectsSizeAlarm/Resource"
+   }
+  },
+  "CleanerLambdaServiceRole9F5C3FC0": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "CleanerStack/CleanerLambda/ServiceRole/Resource"
+   }
+  },
+  "CleanerLambdaServiceRoleDefaultPolicy04CE099E": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "s3:DeleteObject",
+        "s3:ListBucket"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:aws:s3:::",
+           {
+            "Fn::ImportValue": "CopierStack:ExportsOutputRefDestinationBucket4BECDB47A299B8F3"
+           },
+           "/*"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:aws:s3:::",
+           {
+            "Fn::ImportValue": "CopierStack:ExportsOutputRefDestinationBucket4BECDB47A299B8F3"
+           }
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "CleanerLambdaServiceRoleDefaultPolicy04CE099E",
+    "Roles": [
+     {
+      "Ref": "CleanerLambdaServiceRole9F5C3FC0"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "CleanerStack/CleanerLambda/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "CleanerLambdaADF65AF3": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "47c5bf2a1da7c3532d708df510d003c9fcd8cd078683808fa4b68a60252e67c0.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "DESTINATION_BUCKET": {
+       "Fn::ImportValue": "CopierStack:ExportsOutputRefDestinationBucket4BECDB47A299B8F3"
+      }
+     }
+    },
+    "Handler": "cleaner.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "CleanerLambdaServiceRole9F5C3FC0",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.12"
+   },
+   "DependsOn": [
+    "CleanerLambdaServiceRoleDefaultPolicy04CE099E",
+    "CleanerLambdaServiceRole9F5C3FC0"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "CleanerStack/CleanerLambda/Resource",
+    "aws:asset:path": "asset.47c5bf2a1da7c3532d708df510d003c9fcd8cd078683808fa4b68a60252e67c0",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "CleanerLambdaTempObjectsSizeAlarmAlarmPermission75959F54": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "CleanerLambdaADF65AF3",
+      "Arn"
+     ]
+    },
+    "Principal": "lambda.alarms.cloudwatch.amazonaws.com",
+    "SourceAccount": {
+     "Ref": "AWS::AccountId"
+    },
+    "SourceArn": {
+     "Fn::GetAtt": [
+      "TempObjectsSizeAlarm657F75CC",
+      "Arn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "CleanerStack/CleanerLambda/TempObjectsSizeAlarmAlarmPermission"
+   }
+  },
+  "CleanerLogGroup4DCDA82F": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": {
+     "Fn::Join": [
+      "",
+      [
+       "/aws/lambda/",
+       {
+        "Ref": "CleanerLambdaADF65AF3"
+       }
+      ]
+     ]
+    },
+    "RetentionInDays": 7
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "CleanerStack/CleanerLogGroup/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/02OQW7CMBBFz8LemRbChiVEKpsuonAANDgmTGN7Ko+tCFm+O4orpK7ek/7/mtnBdn+Azw0u0uhxbizdIF8i6lnhItesLadxwagfkI8Wg1Pd3VcpyqK7jQj5K3kdif0a/ffeBEcixL4oQgd5YGvWoLJnS/pZe9WKkvaKIiYKHFcoaeGU9GziCcUoy5NA/ubpHDj9rru3l6IGI5yCNqouLxEn8lM99Q66u+/YjxTrO/0zPth/tLDdwX7zI0RNSD6SMzD88QVCQ1s1GQEAAA=="
+   },
+   "Metadata": {
+    "aws:cdk:path": "CleanerStack/CDKMetadata/Default"
+   },
+   "Condition": "CDKMetadataAvailable"
+  }
+ },
+ "Conditions": {
+  "CDKMetadataAvailable": {
+   "Fn::Or": [
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "af-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-northeast-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-northeast-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ca-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "cn-north-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "cn-northwest-1"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-north-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-3"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "il-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "me-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "me-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "sa-east-1"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-east-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-west-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-west-2"
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

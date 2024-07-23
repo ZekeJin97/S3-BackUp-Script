@@ -1,5 +1,6 @@
 from aws_cdk import (
     Stack,
+    aws_iam as iam,
     aws_s3 as s3,
     aws_lambda as lambda_,
     aws_logs as logs,
@@ -11,8 +12,6 @@ class CopierStack(Stack):
 
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
-
-        print(f"Initializing {construct_id}")
 
         # Define the buckets
         self.source_bucket = s3.Bucket(self, "SourceBucket")
@@ -28,7 +27,13 @@ class CopierStack(Stack):
             }
         )
 
-        # Permissions for the lambda function
+        # Add permissions to publish metrics to CloudWatch
+        copier_lambda.add_to_role_policy(iam.PolicyStatement(
+            actions=["cloudwatch:PutMetricData"],
+            resources=["*"]
+        ))
+
+        # Permissions for the lambda
         self.source_bucket.grant_read(copier_lambda)
         self.destination_bucket.grant_write(copier_lambda)
 
@@ -43,5 +48,3 @@ class CopierStack(Stack):
             log_group_name=f"/aws/lambda/{copier_lambda.function_name}",
             retention=logs.RetentionDays.ONE_WEEK
         )
-
-        print(f"{construct_id} initialization complete")

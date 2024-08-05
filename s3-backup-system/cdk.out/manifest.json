@@ -1,0 +1,329 @@
+{
+  "version": "36.0.0",
+  "artifacts": {
+    "CopierStack.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "CopierStack.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "CopierStack": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/unknown-region",
+      "properties": {
+        "templateFile": "CopierStack.template.json",
+        "terminationProtection": false,
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/8598da73971c729a17e119f0638d87505ec012d6d06676d11f689eed6fedf487.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "CopierStack.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-${AWS::Region}",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "CopierStack.assets"
+      ],
+      "metadata": {
+        "/CopierStack/SourceBucket/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SourceBucketDDD2130A"
+          }
+        ],
+        "/CopierStack/SourceBucket/Notifications/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SourceBucketNotifications0A6F2084"
+          }
+        ],
+        "/CopierStack/DestinationBucket/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DestinationBucket4BECDB47"
+          }
+        ],
+        "/CopierStack/S3EventTopic/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "S3EventTopic5FF7B50F"
+          }
+        ],
+        "/CopierStack/S3EventTopic/Policy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "S3EventTopicPolicyEC20EE32"
+          }
+        ],
+        "/CopierStack/CleanerSQSQueue/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CleanerSQSQueueD17137D0"
+          }
+        ],
+        "/CopierStack/CleanerSQSQueue/Policy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CleanerSQSQueuePolicyB44FB302"
+          }
+        ],
+        "/CopierStack/CleanerSQSQueue/CopierStackAlarmSNSTopicD179965B/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CleanerSQSQueueCopierStackAlarmSNSTopicD179965B34E251E9"
+          }
+        ],
+        "/CopierStack/AlarmSNSTopic/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AlarmSNSTopicEFACB561"
+          }
+        ],
+        "/CopierStack/CopierLambda/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CopierLambdaServiceRoleD2D0B2A1"
+          }
+        ],
+        "/CopierStack/CopierLambda/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CopierLambdaServiceRoleDefaultPolicy58FCDC2A"
+          }
+        ],
+        "/CopierStack/CopierLambda/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CopierLambda423421F6"
+          }
+        ],
+        "/CopierStack/CopierLambda/AllowInvoke:CopierStackS3EventTopic0F559E61": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CopierLambdaAllowInvokeCopierStackS3EventTopic0F559E61D22F403B"
+          }
+        ],
+        "/CopierStack/CopierLambda/S3EventTopic/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CopierLambdaS3EventTopic3A832F57"
+          }
+        ],
+        "/CopierStack/LoggerLambda/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "LoggerLambdaServiceRole902E33C1"
+          }
+        ],
+        "/CopierStack/LoggerLambda/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "LoggerLambdaServiceRoleDefaultPolicyC364621A"
+          }
+        ],
+        "/CopierStack/LoggerLambda/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "LoggerLambda1366804F"
+          }
+        ],
+        "/CopierStack/LoggerLambda/AllowInvoke:CopierStackS3EventTopic0F559E61": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "LoggerLambdaAllowInvokeCopierStackS3EventTopic0F559E611D3CEE40"
+          }
+        ],
+        "/CopierStack/LoggerLambda/S3EventTopic/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "LoggerLambdaS3EventTopic434D4993"
+          }
+        ],
+        "/CopierStack/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Role/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC"
+          }
+        ],
+        "/CopierStack/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Role/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleDefaultPolicy2CF63D36"
+          }
+        ],
+        "/CopierStack/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BucketNotificationsHandler050a0587b7544547bf325f094a3db8347ECC3691"
+          }
+        ],
+        "/CopierStack/LoggerLogGroup/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "LoggerLogGroup578F841E"
+          }
+        ],
+        "/CopierStack/TempObjectsSizeAlarm/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TempObjectsSizeAlarm657F75CC"
+          }
+        ],
+        "/CopierStack/DestinationBucketOutput": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DestinationBucketOutput"
+          }
+        ],
+        "/CopierStack/AlarmSNSTopicArnOutput": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AlarmSNSTopicArnOutput"
+          }
+        ],
+        "/CopierStack/CleanerSQSQueueUrlOutput": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CleanerSQSQueueUrlOutput"
+          }
+        ],
+        "/CopierStack/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/CopierStack/CDKMetadata/Condition": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadataAvailable"
+          }
+        ],
+        "/CopierStack/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/CopierStack/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "CopierStack"
+    },
+    "CleanerStack.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "CleanerStack.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "CleanerStack": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/unknown-region",
+      "properties": {
+        "templateFile": "CleanerStack.template.json",
+        "terminationProtection": false,
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/3c6341d8dffbc12a609022a4b6b420ef489b06cdd70bf3884bfd08fbc7d6e3cf.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "CleanerStack.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-${AWS::Region}",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "CleanerStack.assets"
+      ],
+      "metadata": {
+        "/CleanerStack/CleanerLambda/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CleanerLambdaServiceRole9F5C3FC0"
+          }
+        ],
+        "/CleanerStack/CleanerLambda/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CleanerLambdaServiceRoleDefaultPolicy04CE099E"
+          }
+        ],
+        "/CleanerStack/CleanerLambda/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CleanerLambdaADF65AF3"
+          }
+        ],
+        "/CleanerStack/CleanerLambda/AllowInvoke:CleanerStackCleanerAlarmSNSTopic6340542F": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CleanerLambdaAllowInvokeCleanerStackCleanerAlarmSNSTopic6340542FBB21D1D1"
+          }
+        ],
+        "/CleanerStack/CleanerLambda/CleanerAlarmSNSTopic/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CleanerLambdaCleanerAlarmSNSTopicB96BA9D0"
+          }
+        ],
+        "/CleanerStack/CleanerLogGroup/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CleanerLogGroup4DCDA82F"
+          }
+        ],
+        "/CleanerStack/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/CleanerStack/CDKMetadata/Condition": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadataAvailable"
+          }
+        ],
+        "/CleanerStack/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/CleanerStack/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "CleanerStack"
+    },
+    "Tree": {
+      "type": "cdk:tree",
+      "properties": {
+        "file": "tree.json"
+      }
+    }
+  }
+}

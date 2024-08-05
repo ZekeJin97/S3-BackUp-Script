@@ -1,0 +1,1100 @@
+{
+  "version": "tree-0.1",
+  "tree": {
+    "id": "App",
+    "path": "",
+    "children": {
+      "CopierCleanerStack": {
+        "id": "CopierCleanerStack",
+        "path": "CopierCleanerStack",
+        "children": {
+          "SourceBucket": {
+            "id": "SourceBucket",
+            "path": "CopierCleanerStack/SourceBucket",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "CopierCleanerStack/SourceBucket/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::S3::Bucket",
+                  "aws:cdk:cloudformation:props": {}
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3.CfnBucket",
+                  "version": "2.149.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_s3.Bucket",
+              "version": "2.149.0"
+            }
+          },
+          "DestinationBucket": {
+            "id": "DestinationBucket",
+            "path": "CopierCleanerStack/DestinationBucket",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "CopierCleanerStack/DestinationBucket/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::S3::Bucket",
+                  "aws:cdk:cloudformation:props": {}
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3.CfnBucket",
+                  "version": "2.149.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_s3.Bucket",
+              "version": "2.149.0"
+            }
+          },
+          "S3EventTopic": {
+            "id": "S3EventTopic",
+            "path": "CopierCleanerStack/S3EventTopic",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "CopierCleanerStack/S3EventTopic/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::SNS::Topic",
+                  "aws:cdk:cloudformation:props": {}
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_sns.CfnTopic",
+                  "version": "2.149.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_sns.Topic",
+              "version": "2.149.0"
+            }
+          },
+          "AlarmTopic": {
+            "id": "AlarmTopic",
+            "path": "CopierCleanerStack/AlarmTopic",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "CopierCleanerStack/AlarmTopic/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::SNS::Topic",
+                  "aws:cdk:cloudformation:props": {}
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_sns.CfnTopic",
+                  "version": "2.149.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_sns.Topic",
+              "version": "2.149.0"
+            }
+          },
+          "S3EventQueue": {
+            "id": "S3EventQueue",
+            "path": "CopierCleanerStack/S3EventQueue",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "CopierCleanerStack/S3EventQueue/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::SQS::Queue",
+                  "aws:cdk:cloudformation:props": {
+                    "visibilityTimeout": 60
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_sqs.CfnQueue",
+                  "version": "2.149.0"
+                }
+              },
+              "Policy": {
+                "id": "Policy",
+                "path": "CopierCleanerStack/S3EventQueue/Policy",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "CopierCleanerStack/S3EventQueue/Policy/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::SQS::QueuePolicy",
+                      "aws:cdk:cloudformation:props": {
+                        "policyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "sqs:SendMessage",
+                              "Condition": {
+                                "ArnEquals": {
+                                  "aws:SourceArn": {
+                                    "Ref": "S3EventTopic5FF7B50F"
+                                  }
+                                }
+                              },
+                              "Effect": "Allow",
+                              "Principal": {
+                                "Service": "sns.amazonaws.com"
+                              },
+                              "Resource": {
+                                "Fn::GetAtt": [
+                                  "S3EventQueue221E8167",
+                                  "Arn"
+                                ]
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "queues": [
+                          {
+                            "Ref": "S3EventQueue221E8167"
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_sqs.CfnQueuePolicy",
+                      "version": "2.149.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_sqs.QueuePolicy",
+                  "version": "2.149.0"
+                }
+              },
+              "CopierCleanerStackS3EventTopic850DD56E": {
+                "id": "CopierCleanerStackS3EventTopic850DD56E",
+                "path": "CopierCleanerStack/S3EventQueue/CopierCleanerStackS3EventTopic850DD56E",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "CopierCleanerStack/S3EventQueue/CopierCleanerStackS3EventTopic850DD56E/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::SNS::Subscription",
+                      "aws:cdk:cloudformation:props": {
+                        "endpoint": {
+                          "Fn::GetAtt": [
+                            "S3EventQueue221E8167",
+                            "Arn"
+                          ]
+                        },
+                        "protocol": "sqs",
+                        "topicArn": {
+                          "Ref": "S3EventTopic5FF7B50F"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_sns.CfnSubscription",
+                      "version": "2.149.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_sns.Subscription",
+                  "version": "2.149.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_sqs.Queue",
+              "version": "2.149.0"
+            }
+          },
+          "CopierLambda": {
+            "id": "CopierLambda",
+            "path": "CopierCleanerStack/CopierLambda",
+            "children": {
+              "ServiceRole": {
+                "id": "ServiceRole",
+                "path": "CopierCleanerStack/CopierLambda/ServiceRole",
+                "children": {
+                  "ImportServiceRole": {
+                    "id": "ImportServiceRole",
+                    "path": "CopierCleanerStack/CopierLambda/ServiceRole/ImportServiceRole",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.Resource",
+                      "version": "2.149.0"
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "CopierCleanerStack/CopierLambda/ServiceRole/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                      "aws:cdk:cloudformation:props": {
+                        "assumeRolePolicyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "sts:AssumeRole",
+                              "Effect": "Allow",
+                              "Principal": {
+                                "Service": "lambda.amazonaws.com"
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "managedPolicyArns": [
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+                              ]
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                      "version": "2.149.0"
+                    }
+                  },
+                  "DefaultPolicy": {
+                    "id": "DefaultPolicy",
+                    "path": "CopierCleanerStack/CopierLambda/ServiceRole/DefaultPolicy",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "CopierCleanerStack/CopierLambda/ServiceRole/DefaultPolicy/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
+                          "aws:cdk:cloudformation:props": {
+                            "policyDocument": {
+                              "Statement": [
+                                {
+                                  "Action": [
+                                    "sqs:ReceiveMessage",
+                                    "sqs:ChangeMessageVisibility",
+                                    "sqs:GetQueueUrl",
+                                    "sqs:DeleteMessage",
+                                    "sqs:GetQueueAttributes"
+                                  ],
+                                  "Effect": "Allow",
+                                  "Resource": {
+                                    "Fn::GetAtt": [
+                                      "S3EventQueue221E8167",
+                                      "Arn"
+                                    ]
+                                  }
+                                },
+                                {
+                                  "Action": [
+                                    "s3:GetObject*",
+                                    "s3:GetBucket*",
+                                    "s3:List*",
+                                    "s3:DeleteObject*",
+                                    "s3:PutObject",
+                                    "s3:PutObjectLegalHold",
+                                    "s3:PutObjectRetention",
+                                    "s3:PutObjectTagging",
+                                    "s3:PutObjectVersionTagging",
+                                    "s3:Abort*"
+                                  ],
+                                  "Effect": "Allow",
+                                  "Resource": [
+                                    {
+                                      "Fn::GetAtt": [
+                                        "SourceBucketDDD2130A",
+                                        "Arn"
+                                      ]
+                                    },
+                                    {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          {
+                                            "Fn::GetAtt": [
+                                              "SourceBucketDDD2130A",
+                                              "Arn"
+                                            ]
+                                          },
+                                          "/*"
+                                        ]
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "Action": [
+                                    "s3:GetObject*",
+                                    "s3:GetBucket*",
+                                    "s3:List*",
+                                    "s3:DeleteObject*",
+                                    "s3:PutObject",
+                                    "s3:PutObjectLegalHold",
+                                    "s3:PutObjectRetention",
+                                    "s3:PutObjectTagging",
+                                    "s3:PutObjectVersionTagging",
+                                    "s3:Abort*"
+                                  ],
+                                  "Effect": "Allow",
+                                  "Resource": [
+                                    {
+                                      "Fn::GetAtt": [
+                                        "DestinationBucket4BECDB47",
+                                        "Arn"
+                                      ]
+                                    },
+                                    {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          {
+                                            "Fn::GetAtt": [
+                                              "DestinationBucket4BECDB47",
+                                              "Arn"
+                                            ]
+                                          },
+                                          "/*"
+                                        ]
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ],
+                              "Version": "2012-10-17"
+                            },
+                            "policyName": "CopierLambdaServiceRoleDefaultPolicy58FCDC2A",
+                            "roles": [
+                              {
+                                "Ref": "CopierLambdaServiceRoleD2D0B2A1"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_iam.CfnPolicy",
+                          "version": "2.149.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.Policy",
+                      "version": "2.149.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.Role",
+                  "version": "2.149.0"
+                }
+              },
+              "Code": {
+                "id": "Code",
+                "path": "CopierCleanerStack/CopierLambda/Code",
+                "children": {
+                  "Stage": {
+                    "id": "Stage",
+                    "path": "CopierCleanerStack/CopierLambda/Code/Stage",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.AssetStaging",
+                      "version": "2.149.0"
+                    }
+                  },
+                  "AssetBucket": {
+                    "id": "AssetBucket",
+                    "path": "CopierCleanerStack/CopierLambda/Code/AssetBucket",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.BucketBase",
+                      "version": "2.149.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3_assets.Asset",
+                  "version": "2.149.0"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "CopierCleanerStack/CopierLambda/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Lambda::Function",
+                  "aws:cdk:cloudformation:props": {
+                    "code": {
+                      "s3Bucket": {
+                        "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+                      },
+                      "s3Key": "32664c082a00cb493fb74318cfa0882d68b711e8bdc716fdcb917dd18d2a4a95.zip"
+                    },
+                    "environment": {
+                      "variables": {
+                        "DESTINATION_BUCKET": {
+                          "Ref": "DestinationBucket4BECDB47"
+                        }
+                      }
+                    },
+                    "handler": "copier.handler",
+                    "role": {
+                      "Fn::GetAtt": [
+                        "CopierLambdaServiceRoleD2D0B2A1",
+                        "Arn"
+                      ]
+                    },
+                    "runtime": "python3.12"
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.CfnFunction",
+                  "version": "2.149.0"
+                }
+              },
+              "SqsEventSource:CopierCleanerStackS3EventQueue1AA2A89E": {
+                "id": "SqsEventSource:CopierCleanerStackS3EventQueue1AA2A89E",
+                "path": "CopierCleanerStack/CopierLambda/SqsEventSource:CopierCleanerStackS3EventQueue1AA2A89E",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "CopierCleanerStack/CopierLambda/SqsEventSource:CopierCleanerStackS3EventQueue1AA2A89E/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::Lambda::EventSourceMapping",
+                      "aws:cdk:cloudformation:props": {
+                        "eventSourceArn": {
+                          "Fn::GetAtt": [
+                            "S3EventQueue221E8167",
+                            "Arn"
+                          ]
+                        },
+                        "functionName": {
+                          "Ref": "CopierLambda423421F6"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_lambda.CfnEventSourceMapping",
+                      "version": "2.149.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.EventSourceMapping",
+                  "version": "2.149.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_lambda.Function",
+              "version": "2.149.0"
+            }
+          },
+          "LoggerLambda": {
+            "id": "LoggerLambda",
+            "path": "CopierCleanerStack/LoggerLambda",
+            "children": {
+              "ServiceRole": {
+                "id": "ServiceRole",
+                "path": "CopierCleanerStack/LoggerLambda/ServiceRole",
+                "children": {
+                  "ImportServiceRole": {
+                    "id": "ImportServiceRole",
+                    "path": "CopierCleanerStack/LoggerLambda/ServiceRole/ImportServiceRole",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.Resource",
+                      "version": "2.149.0"
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "CopierCleanerStack/LoggerLambda/ServiceRole/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                      "aws:cdk:cloudformation:props": {
+                        "assumeRolePolicyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "sts:AssumeRole",
+                              "Effect": "Allow",
+                              "Principal": {
+                                "Service": "lambda.amazonaws.com"
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "managedPolicyArns": [
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+                              ]
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                      "version": "2.149.0"
+                    }
+                  },
+                  "DefaultPolicy": {
+                    "id": "DefaultPolicy",
+                    "path": "CopierCleanerStack/LoggerLambda/ServiceRole/DefaultPolicy",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "CopierCleanerStack/LoggerLambda/ServiceRole/DefaultPolicy/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
+                          "aws:cdk:cloudformation:props": {
+                            "policyDocument": {
+                              "Statement": [
+                                {
+                                  "Action": [
+                                    "sqs:ReceiveMessage",
+                                    "sqs:ChangeMessageVisibility",
+                                    "sqs:GetQueueUrl",
+                                    "sqs:DeleteMessage",
+                                    "sqs:GetQueueAttributes"
+                                  ],
+                                  "Effect": "Allow",
+                                  "Resource": {
+                                    "Fn::GetAtt": [
+                                      "S3EventQueue221E8167",
+                                      "Arn"
+                                    ]
+                                  }
+                                },
+                                {
+                                  "Action": [
+                                    "s3:GetObject*",
+                                    "s3:GetBucket*",
+                                    "s3:List*",
+                                    "s3:DeleteObject*",
+                                    "s3:PutObject",
+                                    "s3:PutObjectLegalHold",
+                                    "s3:PutObjectRetention",
+                                    "s3:PutObjectTagging",
+                                    "s3:PutObjectVersionTagging",
+                                    "s3:Abort*"
+                                  ],
+                                  "Effect": "Allow",
+                                  "Resource": [
+                                    {
+                                      "Fn::GetAtt": [
+                                        "DestinationBucket4BECDB47",
+                                        "Arn"
+                                      ]
+                                    },
+                                    {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          {
+                                            "Fn::GetAtt": [
+                                              "DestinationBucket4BECDB47",
+                                              "Arn"
+                                            ]
+                                          },
+                                          "/*"
+                                        ]
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ],
+                              "Version": "2012-10-17"
+                            },
+                            "policyName": "LoggerLambdaServiceRoleDefaultPolicyC364621A",
+                            "roles": [
+                              {
+                                "Ref": "LoggerLambdaServiceRole902E33C1"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_iam.CfnPolicy",
+                          "version": "2.149.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.Policy",
+                      "version": "2.149.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.Role",
+                  "version": "2.149.0"
+                }
+              },
+              "Code": {
+                "id": "Code",
+                "path": "CopierCleanerStack/LoggerLambda/Code",
+                "children": {
+                  "Stage": {
+                    "id": "Stage",
+                    "path": "CopierCleanerStack/LoggerLambda/Code/Stage",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.AssetStaging",
+                      "version": "2.149.0"
+                    }
+                  },
+                  "AssetBucket": {
+                    "id": "AssetBucket",
+                    "path": "CopierCleanerStack/LoggerLambda/Code/AssetBucket",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.BucketBase",
+                      "version": "2.149.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3_assets.Asset",
+                  "version": "2.149.0"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "CopierCleanerStack/LoggerLambda/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Lambda::Function",
+                  "aws:cdk:cloudformation:props": {
+                    "code": {
+                      "s3Bucket": {
+                        "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+                      },
+                      "s3Key": "32664c082a00cb493fb74318cfa0882d68b711e8bdc716fdcb917dd18d2a4a95.zip"
+                    },
+                    "environment": {
+                      "variables": {
+                        "DESTINATION_BUCKET": {
+                          "Ref": "DestinationBucket4BECDB47"
+                        }
+                      }
+                    },
+                    "handler": "logger.handler",
+                    "role": {
+                      "Fn::GetAtt": [
+                        "LoggerLambdaServiceRole902E33C1",
+                        "Arn"
+                      ]
+                    },
+                    "runtime": "python3.12"
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.CfnFunction",
+                  "version": "2.149.0"
+                }
+              },
+              "SqsEventSource:CopierCleanerStackS3EventQueue1AA2A89E": {
+                "id": "SqsEventSource:CopierCleanerStackS3EventQueue1AA2A89E",
+                "path": "CopierCleanerStack/LoggerLambda/SqsEventSource:CopierCleanerStackS3EventQueue1AA2A89E",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "CopierCleanerStack/LoggerLambda/SqsEventSource:CopierCleanerStackS3EventQueue1AA2A89E/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::Lambda::EventSourceMapping",
+                      "aws:cdk:cloudformation:props": {
+                        "eventSourceArn": {
+                          "Fn::GetAtt": [
+                            "S3EventQueue221E8167",
+                            "Arn"
+                          ]
+                        },
+                        "functionName": {
+                          "Ref": "LoggerLambda1366804F"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_lambda.CfnEventSourceMapping",
+                      "version": "2.149.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.EventSourceMapping",
+                  "version": "2.149.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_lambda.Function",
+              "version": "2.149.0"
+            }
+          },
+          "TemporaryFilesSizeAlarm": {
+            "id": "TemporaryFilesSizeAlarm",
+            "path": "CopierCleanerStack/TemporaryFilesSizeAlarm",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "CopierCleanerStack/TemporaryFilesSizeAlarm/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::CloudWatch::Alarm",
+                  "aws:cdk:cloudformation:props": {
+                    "alarmActions": [
+                      {
+                        "Ref": "AlarmTopicD01E77F9"
+                      }
+                    ],
+                    "comparisonOperator": "GreaterThanOrEqualToThreshold",
+                    "datapointsToAlarm": 1,
+                    "dimensions": [
+                      {
+                        "name": "BucketName",
+                        "value": {
+                          "Ref": "DestinationBucket4BECDB47"
+                        }
+                      }
+                    ],
+                    "evaluationPeriods": 1,
+                    "metricName": "TemporaryObjectSize",
+                    "namespace": "S3BackupSystem",
+                    "period": 60,
+                    "statistic": "Average",
+                    "threshold": 3072
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_cloudwatch.CfnAlarm",
+                  "version": "2.149.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_cloudwatch.Alarm",
+              "version": "2.149.0"
+            }
+          },
+          "CleanerLambda": {
+            "id": "CleanerLambda",
+            "path": "CopierCleanerStack/CleanerLambda",
+            "children": {
+              "ServiceRole": {
+                "id": "ServiceRole",
+                "path": "CopierCleanerStack/CleanerLambda/ServiceRole",
+                "children": {
+                  "ImportServiceRole": {
+                    "id": "ImportServiceRole",
+                    "path": "CopierCleanerStack/CleanerLambda/ServiceRole/ImportServiceRole",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.Resource",
+                      "version": "2.149.0"
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "CopierCleanerStack/CleanerLambda/ServiceRole/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                      "aws:cdk:cloudformation:props": {
+                        "assumeRolePolicyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "sts:AssumeRole",
+                              "Effect": "Allow",
+                              "Principal": {
+                                "Service": "lambda.amazonaws.com"
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "managedPolicyArns": [
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+                              ]
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                      "version": "2.149.0"
+                    }
+                  },
+                  "DefaultPolicy": {
+                    "id": "DefaultPolicy",
+                    "path": "CopierCleanerStack/CleanerLambda/ServiceRole/DefaultPolicy",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "CopierCleanerStack/CleanerLambda/ServiceRole/DefaultPolicy/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
+                          "aws:cdk:cloudformation:props": {
+                            "policyDocument": {
+                              "Statement": [
+                                {
+                                  "Action": [
+                                    "s3:GetObject*",
+                                    "s3:GetBucket*",
+                                    "s3:List*",
+                                    "s3:DeleteObject*",
+                                    "s3:PutObject",
+                                    "s3:PutObjectLegalHold",
+                                    "s3:PutObjectRetention",
+                                    "s3:PutObjectTagging",
+                                    "s3:PutObjectVersionTagging",
+                                    "s3:Abort*"
+                                  ],
+                                  "Effect": "Allow",
+                                  "Resource": [
+                                    {
+                                      "Fn::GetAtt": [
+                                        "DestinationBucket4BECDB47",
+                                        "Arn"
+                                      ]
+                                    },
+                                    {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          {
+                                            "Fn::GetAtt": [
+                                              "DestinationBucket4BECDB47",
+                                              "Arn"
+                                            ]
+                                          },
+                                          "/*"
+                                        ]
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ],
+                              "Version": "2012-10-17"
+                            },
+                            "policyName": "CleanerLambdaServiceRoleDefaultPolicy04CE099E",
+                            "roles": [
+                              {
+                                "Ref": "CleanerLambdaServiceRole9F5C3FC0"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_iam.CfnPolicy",
+                          "version": "2.149.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.Policy",
+                      "version": "2.149.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.Role",
+                  "version": "2.149.0"
+                }
+              },
+              "Code": {
+                "id": "Code",
+                "path": "CopierCleanerStack/CleanerLambda/Code",
+                "children": {
+                  "Stage": {
+                    "id": "Stage",
+                    "path": "CopierCleanerStack/CleanerLambda/Code/Stage",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.AssetStaging",
+                      "version": "2.149.0"
+                    }
+                  },
+                  "AssetBucket": {
+                    "id": "AssetBucket",
+                    "path": "CopierCleanerStack/CleanerLambda/Code/AssetBucket",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.BucketBase",
+                      "version": "2.149.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3_assets.Asset",
+                  "version": "2.149.0"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "CopierCleanerStack/CleanerLambda/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Lambda::Function",
+                  "aws:cdk:cloudformation:props": {
+                    "code": {
+                      "s3Bucket": {
+                        "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+                      },
+                      "s3Key": "32664c082a00cb493fb74318cfa0882d68b711e8bdc716fdcb917dd18d2a4a95.zip"
+                    },
+                    "environment": {
+                      "variables": {
+                        "DESTINATION_BUCKET": {
+                          "Ref": "DestinationBucket4BECDB47"
+                        }
+                      }
+                    },
+                    "handler": "cleaner.handler",
+                    "role": {
+                      "Fn::GetAtt": [
+                        "CleanerLambdaServiceRole9F5C3FC0",
+                        "Arn"
+                      ]
+                    },
+                    "runtime": "python3.12",
+                    "timeout": 40
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.CfnFunction",
+                  "version": "2.149.0"
+                }
+              },
+              "AllowInvoke:CopierCleanerStackAlarmTopicB164A25D": {
+                "id": "AllowInvoke:CopierCleanerStackAlarmTopicB164A25D",
+                "path": "CopierCleanerStack/CleanerLambda/AllowInvoke:CopierCleanerStackAlarmTopicB164A25D",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                  "aws:cdk:cloudformation:props": {
+                    "action": "lambda:InvokeFunction",
+                    "functionName": {
+                      "Fn::GetAtt": [
+                        "CleanerLambdaADF65AF3",
+                        "Arn"
+                      ]
+                    },
+                    "principal": "sns.amazonaws.com",
+                    "sourceArn": {
+                      "Ref": "AlarmTopicD01E77F9"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                  "version": "2.149.0"
+                }
+              },
+              "AlarmTopic": {
+                "id": "AlarmTopic",
+                "path": "CopierCleanerStack/CleanerLambda/AlarmTopic",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "CopierCleanerStack/CleanerLambda/AlarmTopic/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::SNS::Subscription",
+                      "aws:cdk:cloudformation:props": {
+                        "endpoint": {
+                          "Fn::GetAtt": [
+                            "CleanerLambdaADF65AF3",
+                            "Arn"
+                          ]
+                        },
+                        "protocol": "lambda",
+                        "topicArn": {
+                          "Ref": "AlarmTopicD01E77F9"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_sns.CfnSubscription",
+                      "version": "2.149.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_sns.Subscription",
+                  "version": "2.149.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_lambda.Function",
+              "version": "2.149.0"
+            }
+          },
+          "CDKMetadata": {
+            "id": "CDKMetadata",
+            "path": "CopierCleanerStack/CDKMetadata",
+            "children": {
+              "Default": {
+                "id": "Default",
+                "path": "CopierCleanerStack/CDKMetadata/Default",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.149.0"
+                }
+              },
+              "Condition": {
+                "id": "Condition",
+                "path": "CopierCleanerStack/CDKMetadata/Condition",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnCondition",
+                  "version": "2.149.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.3.0"
+            }
+          },
+          "BootstrapVersion": {
+            "id": "BootstrapVersion",
+            "path": "CopierCleanerStack/BootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnParameter",
+              "version": "2.149.0"
+            }
+          },
+          "CheckBootstrapVersion": {
+            "id": "CheckBootstrapVersion",
+            "path": "CopierCleanerStack/CheckBootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnRule",
+              "version": "2.149.0"
+            }
+          }
+        },
+        "constructInfo": {
+          "fqn": "aws-cdk-lib.Stack",
+          "version": "2.149.0"
+        }
+      },
+      "Tree": {
+        "id": "Tree",
+        "path": "Tree",
+        "constructInfo": {
+          "fqn": "constructs.Construct",
+          "version": "10.3.0"
+        }
+      }
+    },
+    "constructInfo": {
+      "fqn": "aws-cdk-lib.App",
+      "version": "2.149.0"
+    }
+  }
+}

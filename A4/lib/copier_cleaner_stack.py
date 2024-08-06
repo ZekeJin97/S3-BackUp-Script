@@ -7,10 +7,12 @@ from aws_cdk import (
     aws_lambda_event_sources as _lambda_event_sources,
     aws_cloudwatch as cloudwatch,
     aws_cloudwatch_actions as cloudwatch_actions,
-    aws_s3_notifications as s3_notifications,
-    Stack, Duration
+    aws_iam as iam,
+    Stack, Duration,
+    aws_s3_notifications as s3_notifications
 )
 from constructs import Construct
+from aws_cdk import App
 
 class CopierCleanerStack(Stack):
 
@@ -28,6 +30,37 @@ class CopierCleanerStack(Stack):
             visibility_timeout=Duration.seconds(60)
         )
         topic.add_subscription(subscriptions.SqsSubscription(s3_event_queue))
+
+        # Add permission to SQS queue to receive messages from SNS topic
+        s3_event_queue.add_to_resource_policy(
+            iam.PolicyStatement(
+                actions=["sqs:SendMessage"],
+                effect=iam.Effect.ALLOW,
+                resources=[s3_event_queue.queue_arn],
+                principals=[iam.ServicePrincipal("sns.amazonaws.com")],
+                conditions={
+                    "ArnEquals": {"aws:SourceArn": topic.topic_arn}
+                }
+            )
+        )
+
+        # Add S3 event notification to SNS topic
+        source_bucket.add_event_notification(
+            s3.EventType.OBJECT_CREATED,
+            s3_notifications.SnsDestination(topic)
+        )
+
+        # Add bucket policy to allow S3 to publish to SNS topic
+        source_bucket.add_to_resource_policy(
+            iam.PolicyStatement(
+                actions=["sns:Publish"],
+                resources=[topic.topic_arn],
+                principals=[iam.ServicePrincipal("s3.amazonaws.com")],
+                conditions={
+                    "StringEquals": {"aws:SourceArn": source_bucket.bucket_arn}
+                }
+            )
+        )
 
         # Copier Lambda
         copier_lambda = _lambda.Function(
@@ -91,3 +124,5 @@ class CopierCleanerStack(Stack):
         )
         alarm_topic.add_subscription(subscriptions.LambdaSubscription(cleaner_lambda))
         destination_bucket.grant_read_write(cleaner_lambda)
+
+

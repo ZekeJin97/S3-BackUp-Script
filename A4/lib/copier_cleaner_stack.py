@@ -12,7 +12,6 @@ from aws_cdk import (
     aws_s3_notifications as s3_notifications
 )
 from constructs import Construct
-from aws_cdk import App
 
 class CopierCleanerStack(Stack):
 
@@ -50,18 +49,6 @@ class CopierCleanerStack(Stack):
             s3_notifications.SnsDestination(topic)
         )
 
-        # Add bucket policy to allow S3 to publish to SNS topic
-        source_bucket.add_to_resource_policy(
-            iam.PolicyStatement(
-                actions=["sns:Publish"],
-                resources=[topic.topic_arn],
-                principals=[iam.ServicePrincipal("s3.amazonaws.com")],
-                conditions={
-                    "StringEquals": {"aws:SourceArn": source_bucket.bucket_arn}
-                }
-            )
-        )
-
         # Copier Lambda
         copier_lambda = _lambda.Function(
             self, "CopierLambda",
@@ -86,10 +73,29 @@ class CopierCleanerStack(Stack):
         )
         logger_lambda.add_event_source(_lambda_event_sources.SqsEventSource(s3_event_queue))
 
-        # Grant permissions
+        # Grant permissions to Copier Lambda
         source_bucket.grant_read_write(copier_lambda)
         destination_bucket.grant_read_write(copier_lambda)
+
+        # Grant permissions to Logger Lambda
         destination_bucket.grant_read_write(logger_lambda)
+        source_bucket.grant_read_write(logger_lambda)
+
+        logger_lambda.add_to_role_policy(
+            iam.PolicyStatement(
+                actions=["cloudwatch:PutMetricData"],
+                resources=["*"],
+                effect=iam.Effect.ALLOW
+            )
+        )
+
+        logger_lambda.add_to_role_policy(
+            iam.PolicyStatement(
+                actions=["s3:GetObject", "s3:PutObject"],
+                resources=[f"{destination_bucket.bucket_arn}/*"],
+                effect=iam.Effect.ALLOW
+            )
+        )
 
         # CloudWatch Alarm
         metric = cloudwatch.Metric(
